@@ -3,6 +3,8 @@
 # description: Implementation of CRUD operations with DynamoDB — CS178 Lab 10
 # proposed score: 5 (out of 5) -- if I don't change this, I agree to get 0 points.
 
+from urllib import response
+
 import boto3
 
 # boto3 uses the credentials configured via `aws configure` on EC2
@@ -73,7 +75,18 @@ def query_movie():
     Prompt user for a Movie Title.
     Print out the average of all ratings in the movie's Ratings list.
     """
-    print("query movie")
+    title = input("What is the movie title? ")
+    response = table.get_item(Key={"Title": title})
+    movie = response.get("Item")
+    if movie is None:
+        print("movie not found")
+        return
+    ratings_list = movie["Ratings"]
+    if ratings_list is None or len(ratings_list) == 0:
+        print("movie has no ratings")
+        return
+    average = sum(ratings_list) / len(ratings_list)
+    print(average)
 
 def print_menu():
     print("----------------------------")
